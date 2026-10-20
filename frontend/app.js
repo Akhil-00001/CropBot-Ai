@@ -1,6 +1,25 @@
 // CropBot chat client: collects the field profile, sends the conversation to
 // the backend and renders the streamed reply.
 (() => {
+  // Always open at the top of the page. Without this the browser restores the
+  // old scroll position on refresh, and a URL ending in "#ask" jumps to the chat.
+  // (window.history, because "history" below is the chat conversation.)
+  window.history.scrollRestoration = "manual";
+  if (location.hash) window.history.replaceState(null, "", location.pathname + location.search);
+  window.scrollTo({ top: 0, behavior: "instant" });
+
+  // In-page links (#ask, #support, ...) scroll smoothly without putting the
+  // "#..." into the URL, so a later refresh still starts at the top.
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    const id = link.getAttribute("href").slice(1);
+    const target = id === "top" ? document.body : document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   const API = window.CROPBOT_API_URL;
   const STORAGE_KEY = "cropbot-profile";
 

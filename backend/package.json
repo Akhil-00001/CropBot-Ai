@@ -1,0 +1,17 @@
+{
+  "name": "cropbot-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CropBot backend: API for the Uttarakhand farming advisor",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "groq-sdk": "^1.6.0"
+  }
+}

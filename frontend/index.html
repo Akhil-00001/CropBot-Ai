@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CropBot | Farming Assistant for Uttarakhand</title>
+  <meta name="description" content="Ask CropBot what to sow in your Uttarakhand district, or what to do when your crop is failing.">
+  <link rel="icon" type="image/png" href="image.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header" aria-label="Main navigation">
+    <a class="brand" href="#top" aria-label="CropBot home">
+      <span class="brand-mark">CB</span>
+      <span>CropBot</span>
+    </a>
+    <nav class="nav-links" aria-label="Page sections">
+      <a href="#ask">Ask CropBot</a>
+      <a href="#support">Crop failure help</a>
+      <a href="#workflow">How it works</a>
+    </nav>
+    <a class="header-action" href="#ask">Start chat</a>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero-image" src="crop-bot-hero.png" alt="A farmer using a smartphone chatbot in a green crop field">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow">Farming guidance for every district of Uttarakhand</p>
+        <h1 id="hero-title">CropBot</h1>
+        <p class="hero-copy">
+          Tell CropBot your district and ask what to sow this season, or describe what is going wrong with your crop.
+          It answers for your area, from the Tarai plains to the high hills.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#ask">Ask CropBot now</a>
+          <a class="secondary-button" href="#support">My crop is failing</a>
+        </div>
+      </div>
+      <div class="hero-panel" aria-label="Example CropBot answer">
+        <div class="panel-top">
+          <span class="status-dot"></span>
+          <span>Example answer</span>
+        </div>
+        <p>"In the mid hills of Almora, rain-fed terraces suit mandua and jhangora this Kharif. Sow with the first good monsoon showers in June-July."</p>
+        <small>Informational guidance only. Verify important decisions with your district KVK or agriculture officer.</small>
+      </div>
+    </section>
+
+    <section class="ask-section" id="ask" aria-labelledby="ask-title">
+      <div class="section-shell">
+        <div class="section-heading">
+          <p class="section-kicker">Ask CropBot</p>
+          <h2 id="ask-title">Your field, your district, your answer.</h2>
+        </div>
+
+        <div class="ask-layout">
+          <form class="card profile-card" id="profile-form" aria-labelledby="profile-title" onsubmit="return false">
+            <h3 id="profile-title">About your field</h3>
+            <p class="hint">Advice depends on where you farm. Choose your district first.</p>
+
+            <div class="field">
+              <label for="district">District <span class="req">*</span></label>
+              <!-- Keep this list in sync with backend/lib/districts.js -->
+              <select id="district" name="district" required>
+                <option value="">Choose district</option>
+                <option>Almora</option>
+                <option>Bageshwar</option>
+                <option>Chamoli</option>
+                <option>Champawat</option>
+                <option>Dehradun</option>
+                <option>Haridwar</option>
+                <option>Nainital</option>
+                <option>Pauri Garhwal</option>
+                <option>Pithoragarh</option>
+                <option>Rudraprayag</option>
+                <option>Tehri Garhwal</option>
+                <option>Udham Singh Nagar</option>
+                <option>Uttarkashi</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="altitude">Where is your field?</label>
+              <select id="altitude" name="altitude">
+                <option value="Not sure">Not sure</option>
+                <option value="Plains / valley (below 1000 m)">Plains / valley (below 1000 m)</option>
+                <option value="Mid hills (1000-2000 m)">Mid hills (1000-2000 m)</option>
+                <option value="High hills (above 2000 m)">High hills (above 2000 m)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="irrigation">Water for the field</label>
+              <select id="irrigation" name="irrigation">
+                <option value="Not sure">Not sure</option>
+                <option value="Irrigated">Irrigated</option>
+                <option value="Partly irrigated">Partly irrigated</option>
+                <option value="Rain-fed">Rain-fed only</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="crop">Crop (optional)</label>
+              <input id="crop" name="crop" type="text" maxlength="60" placeholder="e.g. wheat, mandua, potato">
+            </div>
+
+            <div class="field">
+              <span class="field-label" id="lang-label">Answer language</span>
+              <div class="lang-toggle" role="group" aria-labelledby="lang-label">
+                <button type="button" data-lang="English" aria-pressed="true">English</button>
+                <button type="button" data-lang="Hindi" aria-pressed="false">हिन्दी</button>
+              </div>
+            </div>
+          </form>
+
+          <div class="card chat-card">
+            <div class="chat-head">
+              <div class="panel-top">
+                <span class="status-dot" id="status-dot"></span>
+                <span id="status-text">Field advisory active</span>
+              </div>
+              <button type="button" id="new-chat">New chat</button>
+            </div>
+
+            <div class="chat-log" id="chat-log" aria-live="polite">
+              <div class="welcome" id="welcome">
+                <h3>Namaste! I am CropBot.</h3>
+                <p>Choose your district, then ask a question or tap one below.</p>
+              </div>
+            </div>
+
+            <div class="chips" id="chips" aria-label="Example questions"></div>
+
+            <form class="composer" id="composer">
+              <label for="question" class="visually-hidden">Your question</label>
+              <textarea id="question" rows="1" maxlength="2000" placeholder="Ask about sowing, a sick crop, pests..." required></textarea>
+              <button type="submit" id="send">Send</button>
+            </form>
+            <p class="chat-note">AI guidance can be wrong. Confirm big decisions with your KVK or call Kisan Call Centre 1800-180-1551.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="support-section" id="support" aria-labelledby="support-title">
+      <div class="section-shell support-layout">
+        <div class="support-copy">
+          <p class="section-kicker">Crop failure support</p>
+          <h2 id="support-title">Guidance when the crop is at risk</h2>
+          <p>
+            Describe what you see: yellow leaves, wilting, spots, insects, poor germination. CropBot lists the likely causes,
+            simple checks you can do in the field today, and what to do next.
+          </p>
+        </div>
+        <div class="support-list">
+          <div class="support-row">
+            <strong>Likely causes first</strong>
+            <span>The most probable reasons, with the sign that points to each one.</span>
+          </div>
+          <div class="support-row">
+            <strong>Cheap, safe steps first</strong>
+            <span>Drainage, irrigation and field hygiene come before chemicals. Any spray advice says to follow the label.</span>
+          </div>
+          <div class="support-row">
+            <strong>Knows when to send you to an expert</strong>
+            <span>Tells you when to take a sample or photos to your district Krishi Vigyan Kendra.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow-section" id="workflow" aria-labelledby="workflow-title">
+      <div class="section-shell">
+        <div class="section-heading">
+          <p class="section-kicker">How it works</p>
+          <h2 id="workflow-title">From your field to useful advice</h2>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <span>01</span>
+            <h3>Choose your district</h3>
+            <p>Add your altitude, water source and crop if you know them. Better details give better advice.</p>
+          </article>
+          <article class="step">
+            <span>02</span>
+            <h3>Ask in your own words</h3>
+            <p>"What can I sow now?" or "My potato leaves have black spots." English or Hindi.</p>
+          </article>
+          <article class="step">
+            <span>03</span>
+            <h3>Get steps for your area</h3>
+            <p>Crops that suit your district and season, or causes and fixes for your crop problem.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" id="contact" aria-labelledby="cta-title">
+      <div class="section-shell cta-content">
+        <p class="section-kicker">Responsible AI</p>
+        <h2 id="cta-title">A helper, not a replacement for your KVK.</h2>
+        <div class="disclaimer" role="note" aria-label="Responsible AI disclaimer">
+          <strong>Please note:</strong> CropBot gives AI-generated guidance for information only. It cannot see your field and does
+          not have live weather or soil test data. Verify important decisions with your district Krishi Vigyan Kendra, the block
+          agriculture officer, or the Kisan Call Centre (1800-180-1551).
+        </div>
+        <a class="primary-button dark" href="#ask">Ask CropBot</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

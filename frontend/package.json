@@ -1,0 +1,9 @@
+{
+  "name": "cropbot-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CropBot frontend: static site for the Uttarakhand farming advisor",
+  "scripts": {
+    "dev": "npx --yes serve@14.2.4 -l 5173 ."
+  }
+}

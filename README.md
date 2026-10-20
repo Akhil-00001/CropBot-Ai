@@ -16,7 +16,7 @@ Requires Node.js 20.12 or newer.
 ```bash
 cd backend
 npm install
-cp .env.example .env        # then paste your key into .env
+cp .env.example .env        
 npm start                   # http://localhost:3001
 ```
 
